@@ -1,18 +1,23 @@
 package com.example.tripplanner.ui.screens
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tripplanner.data.Trip
 import com.example.tripplanner.ui.viewmodel.TripViewModel
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 //screen for adding a trip
 //has a form with fields for trip name, location and dates
@@ -31,8 +36,18 @@ fun AddTripScreen(
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
 
+    //storing date as milliseconds
+    var startDateMillis by remember { mutableStateOf<Long?>(null) }
+    var endDateMillis by remember { mutableStateOf<Long?>(null) }
+
+    //date picker states
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+
     //validation errors
     var showError by remember { mutableStateOf(false) }
+    var dateError by remember { mutableStateOf("") }
+
 
     Scaffold(
         topBar = {
@@ -53,7 +68,7 @@ fun AddTripScreen(
                 )
             )
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,7 +76,7 @@ fun AddTripScreen(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
-        ){
+        ) {
             //trip name field
             OutlinedTextField(
                 value = tripName,
@@ -84,7 +99,7 @@ fun AddTripScreen(
                     showError = false
                 },
                 label = { Text("Location") },
-                placeholder = {Text("e.g. Paris, France")},
+                placeholder = { Text("e.g. Paris, France") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 isError = showError && location.isBlank()
@@ -93,35 +108,76 @@ fun AddTripScreen(
             //start date field
             OutlinedTextField(
                 value = startDate,
-                onValueChange = {
-                    startDate = it
-                    showError = false
-                },
+                onValueChange = { }, //read only
                 label = { Text("Start Date") },
-                placeholder = { Text("e.g., October 26th") },
+                placeholder = { Text("Select Start Date") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                isError = showError && startDate.isBlank()
+                readOnly = true,
+                isError = showError && startDate.isBlank(),
+                trailingIcon = {
+                    IconButton(onClick = { showStartDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarToday,
+                            contentDescription = "Select Start Date"
+                        )
+                    }
+                },
+                interactionSource = remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    showStartDatePicker = true
+                                }
+                            }
+                        }
+                    }
             )
 
             //end date field
             OutlinedTextField(
                 value = endDate,
-                onValueChange = {
-                    endDate = it
-                    showError = false
-                },
+                onValueChange = { }, //read only
                 label = { Text("End Date") },
-                placeholder = { Text("e.g., October 31st") },
+                placeholder = { Text("Select End Date") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                isError = showError && endDate.isBlank()
+                readOnly = true,
+                isError = showError && endDate.isBlank(),
+                trailingIcon = {
+                    IconButton(onClick = { showEndDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarToday,
+                            contentDescription = "Select End Date"
+                        )
+                    }
+                },
+                interactionSource = remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    showEndDatePicker = true
+                                }
+                            }
+                        }
+                    }
             )
 
             //error message
-            if (showError){
+            if (showError) {
                 Text(
                     text = "Please fill in all fields",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            //date validation error
+            if (dateError.isNotEmpty()) {
+                Text(
+                    text = dateError,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -132,7 +188,7 @@ fun AddTripScreen(
             //save button
             Button(
                 onClick = {
-                    if (tripName.isBlank() || location.isBlank() || startDate.isBlank() || endDate.isBlank()){
+                    if (tripName.isBlank() || location.isBlank() || startDate.isBlank() || endDate.isBlank()) {
                         showError = true
                     } else {
                         val newTrip = Trip(
@@ -151,6 +207,92 @@ fun AddTripScreen(
                 )
             ) {
                 Text("Save Trip")
+            }
+        }
+
+        //start date picker dialog
+        if (showStartDatePicker) {
+            val datePickerState = rememberDatePickerState()
+
+            DatePickerDialog(
+                onDismissRequest = { showStartDatePicker = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val millis = datePickerState.selectedDateMillis
+                        if (millis != null) {
+                            startDateMillis = millis
+                            startDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                                .format(Date(millis))
+
+                            //if end date is already set and is before start date, clear it
+                            if (endDateMillis != null && endDateMillis!! < millis) {
+                                endDateMillis = null
+                                endDate = ""
+                                dateError = "End date cannot be before start date"
+                            } else {
+                                dateError = ""
+                            }
+                        }
+                        showStartDatePicker = false
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showStartDatePicker = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
+        //end date picker dialog
+        if (showEndDatePicker) {
+
+            //set initial date to start date if start date is selected
+            val initialMillis = startDateMillis ?: System.currentTimeMillis()
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = initialMillis,
+                selectableDates = object : SelectableDates {
+
+                    //only allows dates on or after start date
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                        return startDateMillis?.let { utcTimeMillis >= it } ?: true
+                    }
+                }
+            )
+
+            DatePickerDialog(
+                onDismissRequest = { showEndDatePicker = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val millis = datePickerState.selectedDateMillis
+                        if (millis != null) {
+
+                            //validate end date is not before start date
+                            if (startDateMillis != null && millis < startDateMillis!!) {
+                                dateError = "End date cannot be before start date"
+                            } else {
+                                endDateMillis = millis
+                                endDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                                    .format(Date(millis))
+                                dateError = ""
+                                showEndDatePicker = false
+                            }
+                        }
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showEndDatePicker = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
             }
         }
     }
