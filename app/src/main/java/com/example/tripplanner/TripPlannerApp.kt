@@ -8,6 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.tripplanner.ui.screens.HomeScreen
+//import com.example.tripplanner.ui.screens.AddItineraryScreen
+//import com.example.tripplanner.ui.screens.AddTripScreen
+//import com.example.tripplanner.ui.screens.TripDetailScreen
+//import com.example.tripplanner.ui.screens.TripMapScreen
 
 /**
  * enum representing all possible navigation destinations in the app
@@ -24,7 +29,7 @@ enum class TripPlannerScreen{
 //sets up navhost and defines all nav routes
 
 @Composable
-fun TripPlannerApplication(navController: NavHostController = rememberNavController()){
+fun TripPlannerApp(navController: NavHostController = rememberNavController()){
     NavHost( //container for all screens
         navController = navController,
         startDestination = TripPlannerScreen.Home.name
@@ -41,6 +46,7 @@ fun TripPlannerApplication(navController: NavHostController = rememberNavControl
             })
         }
 
+        /*
         //trip detail screen
         composable(route = TripPlannerScreen.AddTrip.name) {
             AddTripScreen(onNavigateBack = {
@@ -53,7 +59,7 @@ fun TripPlannerApplication(navController: NavHostController = rememberNavControl
 
         //trip details screen
         composable(
-            route = "${TripPlannerScreen.TripDetail.name}/${tripId}",
+            route = "${TripPlannerScreen.TripDetail.name}/tripId",
             arguments = listOf(navArgument("tripId") {type = NavType.IntType})
         ) {
             backStackEntry -> val tripId = backStackEntry.arguments?.getInt("tripId") ?: 0
@@ -98,5 +104,6 @@ fun TripPlannerApplication(navController: NavHostController = rememberNavControl
                 }
             )
         }
+         */
     }
 }

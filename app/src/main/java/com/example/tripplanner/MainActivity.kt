@@ -12,8 +12,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripPlannerTheme {
-                TripPlannerApplication()
+                TripPlannerApp()
             }
         }
     }
 }
+
