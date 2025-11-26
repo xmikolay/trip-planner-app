@@ -10,8 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.tripplanner.ui.screens.HomeScreen
 import com.example.tripplanner.ui.screens.AddTripScreen
+import com.example.tripplanner.ui.screens.TripDetailScreen
 //import com.example.tripplanner.ui.screens.AddItineraryScreen
-//import com.example.tripplanner.ui.screens.TripDetailScreen
 //import com.example.tripplanner.ui.screens.TripMapScreen
 
 /**
@@ -56,10 +56,10 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 navController.popBackStack()
             })
         }
-        /*
+
         //trip details screen
         composable(
-            route = "${TripPlannerScreen.TripDetail.name}/tripId",
+            route = "${TripPlannerScreen.TripDetail.name}/{tripId}",
             arguments = listOf(navArgument("tripId") {type = NavType.IntType})
         ) {
             backStackEntry -> val tripId = backStackEntry.arguments?.getInt("tripId") ?: 0
@@ -75,7 +75,7 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 }
             )
         }
-
+        /*
         //trip map screen
         composable(
             route = "${TripPlannerScreen.TripMap.name}/{tripId}",

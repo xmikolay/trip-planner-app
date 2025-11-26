@@ -65,9 +65,9 @@ class TripViewModel(private val repository: TripsRepository) : ViewModel() {
     }
 
     //set currently selected trip
-    fun selectTrip(trip: Trip) {
+    fun selectTrip(trip: Trip?) {
         _uiState.update { it.copy(currentTrip = trip)}
-        loadItineraryItems(trip.id)
+        trip?.let { loadItineraryItems(it.id) }
     }
 
     //add a new trip to database
