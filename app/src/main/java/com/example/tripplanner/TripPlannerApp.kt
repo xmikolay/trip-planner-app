@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.tripplanner.ui.screens.HomeScreen
+import com.example.tripplanner.ui.screens.AddTripScreen
 //import com.example.tripplanner.ui.screens.AddItineraryScreen
-//import com.example.tripplanner.ui.screens.AddTripScreen
 //import com.example.tripplanner.ui.screens.TripDetailScreen
 //import com.example.tripplanner.ui.screens.TripMapScreen
 
@@ -46,8 +46,8 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
             })
         }
 
-        /*
-        //trip detail screen
+
+        //add trip screen
         composable(route = TripPlannerScreen.AddTrip.name) {
             AddTripScreen(onNavigateBack = {
                 navController.popBackStack()
@@ -56,7 +56,7 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 navController.popBackStack()
             })
         }
-
+        /*
         //trip details screen
         composable(
             route = "${TripPlannerScreen.TripDetail.name}/tripId",
