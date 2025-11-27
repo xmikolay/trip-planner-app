@@ -11,7 +11,7 @@ import androidx.navigation.navArgument
 import com.example.tripplanner.ui.screens.HomeScreen
 import com.example.tripplanner.ui.screens.AddTripScreen
 import com.example.tripplanner.ui.screens.TripDetailScreen
-//import com.example.tripplanner.ui.screens.AddItineraryScreen
+import com.example.tripplanner.ui.screens.AddItineraryScreen
 //import com.example.tripplanner.ui.screens.TripMapScreen
 
 /**
@@ -75,6 +75,7 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 }
             )
         }
+
         /*
         //trip map screen
         composable(
@@ -88,6 +89,7 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 }
             )
         }
+        */
 
         //add itinerary screen
         composable(
@@ -104,6 +106,6 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 }
             )
         }
-         */
+
     }
 }
