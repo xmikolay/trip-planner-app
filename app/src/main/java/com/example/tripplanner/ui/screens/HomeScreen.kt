@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,13 +30,33 @@ fun HomeScreen(
     //get UI state from viewmodel
     val uiState by viewModel.uiState.collectAsState()
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("My Trips") },
+                actions = {
+                    //test button to manually trigger worker
+                    IconButton(onClick = {
+                        //trigger worker
+                        val workRequest = androidx.work.OneTimeWorkRequestBuilder<com.example.tripplanner.worker.TripReminderWorker>().build()
+                        androidx.work.WorkManager.getInstance(context).enqueue(workRequest)
+
+                        android.widget.Toast.makeText(
+                                context, "Background task triggered, check Logcat for 'TripReminderWorker'.", android.widget.Toast.LENGTH_LONG).show()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Test Background Task"
+                        )
+                    }
+                },
+
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
