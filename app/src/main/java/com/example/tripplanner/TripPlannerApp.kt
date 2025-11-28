@@ -12,7 +12,7 @@ import com.example.tripplanner.ui.screens.HomeScreen
 import com.example.tripplanner.ui.screens.AddTripScreen
 import com.example.tripplanner.ui.screens.TripDetailScreen
 import com.example.tripplanner.ui.screens.AddItineraryScreen
-//import com.example.tripplanner.ui.screens.TripMapScreen
+import com.example.tripplanner.ui.screens.TripMapScreen
 
 /**
  * enum representing all possible navigation destinations in the app
@@ -34,8 +34,6 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
         navController = navController,
         startDestination = TripPlannerScreen.Home.name
     ) {
-        //just establishing the names and logic for screens, this wont work now
-
         //home screen
         composable(route = TripPlannerScreen.Home.name) {
             HomeScreen(onNavigateToAddTrip = {
@@ -45,7 +43,6 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 navController.navigate("${TripPlannerScreen.TripDetail.name}/$tripId")
             })
         }
-
 
         //add trip screen
         composable(route = TripPlannerScreen.AddTrip.name) {
@@ -76,7 +73,6 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
             )
         }
 
-        /*
         //trip map screen
         composable(
             route = "${TripPlannerScreen.TripMap.name}/{tripId}",
@@ -89,7 +85,6 @@ fun TripPlannerApp(navController: NavHostController = rememberNavController()){
                 }
             )
         }
-        */
 
         //add itinerary screen
         composable(
