@@ -21,4 +21,17 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.tripplanner", appContext.packageName)
     }
+
+    @Test
+    fun app_package_name_is_correct() {
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        assertTrue("Package name should be correct",
+            appContext.packageName.contains("tripplanner"))
+    }
+
+    @Test
+    fun application_launches_successfully() {
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        assertNotNull("Application context should not be null", appContext)
+    }
 }
